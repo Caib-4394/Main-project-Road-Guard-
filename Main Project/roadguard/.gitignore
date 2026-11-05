@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node / Frontend
+node_modules/
+dist/
+.vite/
+*.local
+
+# Database & Storage
+*.db
+*.sqlite3
+uploads/raw/*
+uploads/annotated/*
+uploads/xai/*
+uploads/repairs/*
+!uploads/*/.gitkeep
+
+# Environment variables
+.env
+
+# Large ML checkpoints & raw video files (keep sample weights if explicitly tracked)
+*.mp4
+*.avi
+*.mov
+
+# IDE
+.vscode/
+.idea/
+*.swp

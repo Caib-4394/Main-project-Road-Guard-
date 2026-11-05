@@ -1,0 +1,12 @@
+# RoadGuard Dataset Configuration for YOLOv8 Training
+path: ../../DATASET
+train: images
+val: ../val/images
+test: ../test/images
+
+# Classes
+nc: 3
+names:
+  0: pothole
+  1: crack
+  2: open_manhole

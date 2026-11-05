@@ -1,0 +1,6 @@
+dataset 1:
+https://github.com/michelpf/dataset-pothole
+dataset 2:
+https://www.kaggle.com/datasets/anggadwisunarto/potholes-detection-yolov8
+dataset 3:
+https://www.kaggle.com/datasets/sabidrahman/pothole-cracks-and-openmanhole

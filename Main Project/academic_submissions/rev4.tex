@@ -1,0 +1,320 @@
+\documentclass[10pt]{beamer}
+% -------------------------
+% Theme and packages
+% -------------------------
+\usetheme{CambridgeUS}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{multirow}
+
+% Set title info
+\title[UAV-TAID Framework]{A Traffic-Aware AI Framework for Synthetic Dataset Generation and Intelligent Intrusion Detection in UAV Networks}
+\subtitle{First Review Presentation}
+\author{%
+\begin{tabular}{c}
+Student 1: \textbf{Aarav Sharma} (Roll No: 21CS001) \\
+Student 2: \textbf{Priya Reddy} (Roll No: 21CS015) \\
+Student 3: \textbf{Rohan Patel} (Roll No: 21CS028) \\
+Student 4: \textbf{Sneha Iyer} (Roll No: 21CS042) \\[0.4em]
+Guide: Dr. Aswani K Eedara
+\end{tabular}
+}
+\institute{Your Department \\ Your Institution \\ Tadepalle, Andhra Pradesh, India}
+\date{\today}
+
+% -------------------------
+% Document
+% -------------------------
+\begin{document}
+
+% ---------- Title Slide ----------
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% ---------- Abstract ----------
+\begin{frame}{Abstract}
+    Unmanned Aerial Vehicle (UAV) networks face severe cybersecurity threats due to their dynamic topology, constrained resources, and scarcity of realistic labeled datasets. Existing intrusion detection systems (IDS) struggle with traffic variability and limited training data, while synthetic generators rarely capture UAV-specific mobility and communication patterns. 
+    
+    This work proposes a unified \textbf{Traffic-Aware AI Framework} that jointly performs (i) intelligent synthetic dataset generation conditioned on UAV traffic context and (ii) adaptive, high-accuracy intrusion detection. The framework employs conditional generative models guided by real-time traffic features and feeds the generated data into a lightweight, continually updated IDS. 
+    
+    Expected outcomes include a high-fidelity public synthetic UAV traffic \& attack dataset and significant gains in detection robustness under realistic flight scenarios.
+\end{frame}
+
+% ---------- Outline ----------
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+% ==========================
+% 1. Introduction \& Motivation
+% ==========================
+\section{Introduction \& Motivation}
+\begin{frame}{Background \& Motivation}
+    \begin{itemize}
+        \item UAVs are rapidly deployed in logistics, surveillance, disaster response, and smart-city applications, forming dense aerial networks (FANETs).
+        \item These networks generate highly dynamic traffic and are vulnerable to GPS spoofing, jamming, Sybil, DDoS, and false-data-injection attacks.
+        \item Real-world labeled UAV traffic and attack datasets remain scarce due to privacy, cost, and safety constraints.
+        \item A traffic-aware AI framework capable of intelligent synthetic data generation and adaptive intrusion detection is therefore essential for secure and scalable UAV networks.
+    \end{itemize}
+\end{frame}
+
+% ==========================
+% 2. Problem Statement
+% ==========================
+\section{Problem Statement}
+\begin{frame}{Problem Statement}
+    \begin{itemize}
+        \item Core problem: Existing UAV IDS solutions suffer from limited labeled data and lack of adaptation to rapidly changing traffic patterns.
+        \item Context: Multi-UAV networks with dynamic topologies, bandwidth constraints, and heterogeneous traffic (C2, sensor, video).
+        \item Key challenges:
+        \begin{itemize}
+            \item Data scarcity and class imbalance for rare attacks
+            \item Absence of traffic-aware synthetic generators that preserve temporal-spatial correlations
+            \item High false-positive rates under realistic mobility
+            \item Need for lightweight real-time detection on resource-constrained platforms
+        \end{itemize}
+        \item Existing approaches fail to jointly solve intelligent generation and traffic-aware detection in one framework.
+    \end{itemize}
+\end{frame}
+
+% ==========================
+% 3. Literature Review
+% ==========================
+\section{Literature Review}
+\begin{frame}{Literature Review: Scope \& Search Strategy}
+    \begin{itemize}
+        \item Databases: IEEE Xplore, Scopus, Web of Science, ACM DL, arXiv, Nature, ScienceDirect
+        \item Keywords: ``UAV intrusion detection'', ``synthetic network traffic GAN'', ``FANET security'', ``traffic-aware IDS'', ``UAV swarm dataset''
+        \item Time window: 2023 – 2026
+        \item Inclusion: Peer-reviewed works on UAV/FANET IDS, generative models for network traffic, or UAV-specific datasets
+        \item Exclusion: Purely theoretical papers, non-UAV networks, non-English works
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[shrink=8]{Key Themes in Existing Work}
+    \begin{table}
+        \centering
+        \footnotesize
+        \caption{Recent literature (2025–2026) on UAV IDS and synthetic data}
+        \begin{tabular}{@{}p{1.1cm}p{2.6cm}p{2.4cm}p{2.3cm}p{2.4cm}@{}}
+            \toprule
+            \textbf{Year} & \textbf{Work} & \textbf{Method} & \textbf{Dataset} & \textbf{Key Limitation} \\
+            \midrule
+            2026 & Residual-aware 1D-CNN (Sci. Reports) & Lightweight residual CNN & UAVIDS-2025 & Limited traffic-context modeling \\
+            2026 & Comprehensive UAV IDS Dataset Review (J. Cyber Sec. Tech.) & Systematic review of 53 datasets & Multiple UAV IDS sets & Highlights persistent data scarcity \\
+            2026 & AI-driven UAV IDS Survey (Comp. Comm.) & Survey of AI techniques & Public UAV traffic + vision sets & Notes lack of unified generation+detection frameworks \\
+            2025 & PCA + Ensemble Learning (Cluster Comp.) & PCA + DT/RF/GB/XGB + MLP & Real UAV-ID dataset & No generative component \\
+            2025 & CNN-Stacked LSTM + Bio-inspired (Results Eng.) & CNN-LSTM + Marine Predators & SDN-UAV scenarios & Traffic awareness is limited \\
+            2025 & CascadeGen (ICICS) & Hybrid GAN-Diffusion & Public network flows & Not UAV-mobility conditioned \\
+            2025 & HITL + GAN for UAV IDS (IEEE IoT J.) & GAN augmentation + Human-in-the-loop & Limited drone datasets & Still relies on scarce real labels \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Strengths \& Limitations of Existing Approaches}
+    \begin{itemize}
+        \item \textbf{Strengths:} High accuracy (often $>$99\%) on static or lab datasets; growing use of residual CNNs, CNN-LSTM, federated learning, and GAN/diffusion models; new public datasets such as UAVIDS-2025 and UAV-NIDD.
+        \item \textbf{Limitations:}
+        \begin{itemize}
+            \item Most generative models are not conditioned on UAV mobility, altitude, or topology.
+            \item IDS models trained without traffic awareness degrade under realistic flight dynamics.
+            \item Very few end-to-end frameworks jointly optimize synthetic generation and adaptive detection.
+        \end{itemize}
+        \item Recurring assumption of near-stationary traffic patterns rarely holds in multi-UAV missions.
+    \end{itemize}
+\end{frame}
+
+% ==========================
+% 4. Research Gap
+% ==========================
+\section{Research Gap}
+\begin{frame}{Identified Research Gap}
+    \begin{itemize}
+        \item No unified traffic-aware AI framework that simultaneously:
+        \begin{enumerate}
+            \item Generates high-fidelity, UAV-specific synthetic traffic and attack data
+            \item Continuously adapts the intrusion detection model using traffic context
+        \end{enumerate}
+        \item Existing generators (even recent hybrid GAN-Diffusion models) lack UAV mobility and communication-context conditioning.
+        \item Current IDS solutions treat traffic features statically.
+        \item Gap type: Methodological + Practical.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{From Gap to Opportunity}
+    \begin{itemize}
+        \item Addressing the gap enables large-scale realistic labeled datasets without costly real-world flight campaigns.
+        \item Traffic-aware generation and detection can lower false alarms and improve early detection of sophisticated attacks.
+        \item Opportunity: Design an end-to-end framework that uses traffic context for both intelligent data generation and adaptive intrusion detection.
+    \end{itemize}
+\end{frame}
+
+% ==========================
+% 5. Objectives \& Research Questions
+% ==========================
+\section{Objectives \& Questions}
+\begin{frame}{Research Objectives}
+    \begin{itemize}
+        \item \textbf{O1:} Design a traffic-aware generative module (conditional GAN / diffusion) that produces realistic multi-UAV traffic and attack traces.
+        \item \textbf{O2:} Develop an adaptive intrusion detection model that incorporates real-time traffic features and context.
+        \item \textbf{O3:} Integrate both modules and evaluate detection performance, data fidelity, and computational efficiency under diverse UAV scenarios.
+        \item \textbf{O4:} Release a publicly usable synthetic UAV traffic \& attack dataset together with the framework.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Research Questions / Hypotheses}
+    \begin{itemize}
+        \item \textbf{RQ1:} Can a traffic-conditioned generative model produce synthetic UAV datasets that improve IDS performance over existing public or randomly generated datasets?
+        \item \textbf{RQ2:} How does real-time traffic awareness affect accuracy, false-positive rate, and latency under varying UAV densities and mobility?
+        \item \textbf{RQ3:} What trade-offs exist between generation fidelity, detection robustness, and computational cost on resource-constrained platforms?
+        \item \textbf{Hypothesis:} A joint traffic-aware generation + detection framework will achieve higher F1-score and better generalization than independent state-of-the-art baselines.
+    \end{itemize}
+\end{frame}
+
+% ==========================
+% 6. Methodology
+% ==========================
+\section{Methodology}
+\begin{frame}{Overall Methodology Overview}
+    \begin{itemize}
+        \item High-level pipeline:
+        \begin{enumerate}
+            \item Real / simulated UAV traffic \& attack data collection
+            \item Traffic feature extraction and context modeling
+            \item Intelligent synthetic dataset generation (traffic-aware)
+            \item Adaptive IDS training and online update
+            \item Multi-scenario evaluation
+        \end{enumerate}
+        \item Main modules: Traffic Context Encoder, Generative Model, IDS Engine, Feedback Loop
+        \item Hybrid approach: simulation + experimental validation (Python + NS-3 / MATLAB + deep-learning stack)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Proposed Approach / System Design}
+    \begin{itemize}
+        \item Core idea: Closed-loop framework in which a traffic-aware generator continuously supplies high-quality synthetic samples that keep the IDS robust and up-to-date.
+        \item Differentiators:
+        \begin{itemize}
+            \item Explicit conditioning on UAV mobility, topology, and traffic type
+            \item Joint optimization of generation fidelity and downstream detection performance
+            \item Lightweight inference path suitable for edge/UAV onboard deployment
+        \end{itemize}
+        \item Key design choices: Conditional generative models, temporal / graph neural encoders, continual learning for the IDS.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Methodological Details}
+    \begin{itemize}
+        \item \textbf{Data:} Simulated multi-UAV scenarios + limited real flight logs. Features include packet statistics, inter-arrival times, RSSI, position, velocity, topology metrics.
+        \item \textbf{Models:} Conditional GAN / Diffusion for generation; Hybrid residual CNN / CNN-LSTM / Graph Transformer for detection.
+        \item \textbf{Baselines:} Standard ML, recent residual CNN (2026), PCA-Ensemble (2025), generic traffic GANs.
+        \item \textbf{Metrics:} Generation quality (statistical similarity, FID), Detection (Accuracy, Precision, Recall, F1, FPR, Latency), Resource usage.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Evaluation Plan}
+    \begin{itemize}
+        \item Setup: Python (PyTorch), NS-3 / MATLAB UAV toolbox, GPU server + edge devices (Jetson / Raspberry Pi).
+        \item Scenarios: 5–50 UAVs, different mobility models, mix of normal + multiple attack types.
+        \item Experiments: Ablation on traffic-context features, robustness to unseen attacks, scalability, baseline comparisons.
+        \item Validation: Multiple runs, confidence intervals, statistical significance tests.
+    \end{itemize}
+\end{frame}
+
+% ==========================
+% 7. Work Done So Far
+% ==========================
+\section{Progress So Far}
+\begin{frame}{Work Completed}
+    \begin{itemize}
+        \item Comprehensive literature survey completed (60+ papers, focus on 2023–2026).
+        \item Problem formulation and research gap refined.
+        \item Initial system architecture designed.
+        \item Simulation environment and feature-extraction pipeline set up.
+        \item Tools ready: PyTorch, Scikit-learn, network simulators, GPU environment.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Preliminary Results (if any)}
+    \begin{itemize}
+        \item Early conditional GAN experiments on simplified UAV traces show promising statistical similarity.
+        \item Baseline IDS models (without traffic awareness) exhibit elevated false-positive rates under mobility changes — confirming the need for traffic context.
+        \item Challenges: capturing long-range temporal dependencies and ensuring attack realism; currently addressed via attention mechanisms and multi-scale conditioning.
+    \end{itemize}
+\end{frame}
+
+% ==========================
+% 8. Timeline \& Plan
+% ==========================
+\section{Timeline \& Plan}
+\begin{frame}{Proposed Timeline}
+    \begin{itemize}
+        \item Month 1–2: Finalize literature review, problem \& gap.
+        \item Month 3–4: Implement traffic-aware generative module; produce initial synthetic datasets.
+        \item Month 5–6: Develop adaptive IDS; run baseline comparisons.
+        \item Month 7–8: Full integration, extensive experiments, ablation \& robustness studies.
+        \item Month 9–10: Edge optimization, documentation, paper writing.
+        \item Month 11+: Thesis finalization and open-source release.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Next Steps Before Second Review}
+    \begin{itemize}
+        \item Complete traffic-context encoder and generative model.
+        \item Generate first version of the synthetic UAV traffic \& attack dataset.
+        \item Train initial IDS models and obtain baseline results.
+        \item Prepare methodology and early-results sections of the report/paper.
+    \end{itemize}
+\end{frame}
+
+% ==========================
+% 9. Expected Contributions
+% ==========================
+\section{Expected Contributions}
+\begin{frame}{Anticipated Contributions}
+    \begin{itemize}
+        \item A novel traffic-aware AI framework unifying intelligent synthetic dataset generation and adaptive intrusion detection for UAV networks.
+        \item A publicly available, high-fidelity synthetic multi-UAV traffic and attack dataset.
+        \item Empirical insights into the impact of traffic awareness on generation quality and detection performance.
+        \item Potential open-source release and publications in reputable venues.
+    \end{itemize}
+\end{frame}
+
+% ==========================
+% 10. References
+% ==========================
+\section{References}
+\begin{frame}{Key References (2025–2026)}
+    \footnotesize
+    \begin{itemize}
+        \item Residual-aware lightweight deep learning framework for high-fidelity intrusion detection in UAV swarm networks, \textit{Scientific Reports}, 2026.
+        \item A comprehensive literature review on intrusion detection datasets for UAVs, \textit{Journal of Cyber Security Technology}, 2026.
+        \item AI-driven intrusion detection for UAV in Smart Urban ecosystems: A comprehensive survey, \textit{Computer Communications}, 2026.
+        \item Robust intrusion detection for unmanned aerial vehicles: a PCA-based feature extraction and ensemble learning approach, \textit{Cluster Computing}, 2025.
+        \item Integrating convolutional stacked LSTM with bio-inspired algorithm for secure UAV communication, \textit{Results in Engineering}, 2025.
+        \item CascadeGen: A Hybrid GAN-Diffusion Framework for Controllable Synthetic Network Traffic, \textit{ICICS}, 2025.
+        \item Enhancing UAV Network Security: A Human-in-the-Loop and GAN-Based Approach, \textit{IEEE Internet of Things Journal}, 2025.
+        \item UAV-NIDD: A Dynamic Dataset for Cybersecurity and Intrusion Detection in UAV Networks, \textit{IEEE Trans. on Network Science and Engineering}, 2025.
+    \end{itemize}
+\end{frame}
+
+% ---------- Thank You ----------
+\begin{frame}{Thank You}
+    \centering
+    \large
+    Questions \& Discussion
+    \vspace{0.5cm}
+    
+    \normalsize
+    Students: Aarav Sharma, Priya Reddy, Rohan Patel, Sneha Iyer \\
+    Guide: Dr. Aswani K Eedara \\
+    Your Institution, Tadepalle, Andhra Pradesh
+\end{frame}
+
+\end{document}

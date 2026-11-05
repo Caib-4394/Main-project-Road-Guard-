@@ -1,0 +1,29 @@
+# Python environments
+**/.venv/
+**/venv/
+**/__pycache__/
+*.pyc
+
+# Secrets
+.env
+**/secrets.toml
+
+# Datasets and generated files
+**/datasets/
+**/data/uploads/
+**/runs/
+
+# Large model files and checkpoints
+*.pt
+*.pth
+*.onnx
+
+# Legacy training outputs
+**/legacy_prototypes/**/weights/
+
+# Local databases
+*.db
+*.sqlite3
+
+# Cache
+.pytest_cache/

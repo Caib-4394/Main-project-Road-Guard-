@@ -1,0 +1,22 @@
+{
+  "model_name": "YOLOv8s-Custom-RoadSense",
+  "checkpoint_path": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\Main Project\\roadguard\\ml\\checkpoints\\roadsense_best.pt",
+  "model_size_mb": 21.48,
+  "classes": {
+    "0": "pothole",
+    "1": "crack",
+    "2": "open_manhole"
+  },
+  "num_classes": 3,
+  "device": "CPU",
+  "average_inference_latency_ms": 164.87,
+  "std_latency_ms": 24.85,
+  "fps_estimate": 6.1,
+  "evaluation_timestamp": "2026-10-18T17:40:53Z",
+  "benchmark_summary": {
+    "mAP_50_historical": 0.8492,
+    "mAP_50_95_historical": 0.5124,
+    "precision_historical": 0.8455,
+    "recall_historical": 0.8022
+  }
+}

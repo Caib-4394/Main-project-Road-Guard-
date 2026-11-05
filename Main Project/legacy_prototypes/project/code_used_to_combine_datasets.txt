@@ -1,0 +1,46 @@
+import os
+import shutil
+
+source_root = "/content"
+output_root = "/content/combined_dataset"
+
+images_out = os.path.join(output_root, "images")
+labels_out = os.path.join(output_root, "labels")
+
+os.makedirs(images_out, exist_ok=True)
+os.makedirs(labels_out, exist_ok=True)
+
+image_exts = [".jpg", ".jpeg", ".png"]
+
+# Collect ALL images first
+all_images = {}
+
+for root, _, files in os.walk(source_root):
+    for f in files:
+        name, ext = os.path.splitext(f)
+        if ext.lower() in image_exts:
+            all_images[name] = os.path.join(root, f)
+
+print("Total images found:", len(all_images))
+
+copied = 0
+
+# Now scan for labels
+for root, _, files in os.walk(source_root):
+    for f in files:
+        if f.endswith(".txt"):
+            name = os.path.splitext(f)[0]
+
+            if name in all_images:
+                img_path = all_images[name]
+                lbl_path = os.path.join(root, f)
+
+                new_name = f"{copied}_{name}"
+
+                shutil.copy(img_path, os.path.join(images_out, new_name + os.path.splitext(img_path)[1]))
+                shutil.copy(lbl_path, os.path.join(labels_out, new_name + ".txt"))
+
+                copied += 1
+
+print("\n✅ COMBINING COMPLETE")
+print("Total matched image-label pairs:", copied)
