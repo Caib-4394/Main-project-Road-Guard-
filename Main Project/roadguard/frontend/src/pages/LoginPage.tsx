@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { Shield, LogIn, AlertCircle, Sparkles, UserCheck } from 'lucide-react';
+import { Shield, LogIn, AlertCircle, Sparkles, UserPlus, X } from 'lucide-react';
+
+interface DemoPreset {
+  label: string;
+  desc: string;
+  email: string;
+  badge: string;
+  role: string;
+}
 
 export const LoginPage: React.FC = () => {
-  const { login, quickLogin } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -13,13 +20,15 @@ export const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // State for the authority action popup
+  const [selectedPreset, setSelectedPreset] = useState<DemoPreset | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
       await login(email, password);
-      // Keep user on the main interface; interface changes only when clicking their section
       navigate('/');
     } catch (err: any) {
       setError(err.message || 'Login failed. Please verify credentials.');
@@ -28,36 +37,35 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleQuickDemo = async (demoEmail: string) => {
+  const handleQuickLogin = (demoEmail: string) => {
+    // Pre-fill credentials in the form — user must click Sign In themselves
     setEmail(demoEmail);
     setPassword('roadguard2026');
     setError(null);
-    setLoading(true);
-    try {
-      await login(demoEmail, 'roadguard2026');
-      // Keep user on the main interface; interface changes only when clicking their section
-      navigate('/');
-    } catch (err: any) {
-      setError(err.message || 'Quick login failed');
-    } finally {
-      setLoading(false);
-    }
+    setSelectedPreset(null); // close modal, returning to main form
   };
 
-  const demoPresets = [
-    { label: 'Citizen', desc: 'Ravi Kumar', email: 'citizen@roadguard.org', badge: 'bg-emerald-500/10 text-emerald-400' },
-    { label: 'Field Inspector', desc: 'P. Suresh', email: 'inspector@roadguard.org', badge: 'bg-sky-500/10 text-sky-400' },
-    { label: 'Municipal Officer', desc: 'K. Lakshmi', email: 'municipal@roadguard.org', badge: 'bg-amber-500/10 text-amber-400' },
-    { label: 'State Highway PWD', desc: 'M. Ramesh', email: 'pwd@roadguard.org', badge: 'bg-indigo-500/10 text-indigo-400' },
-    { label: 'NHAI Director', desc: 'Dr. Ananya', email: 'nhai@roadguard.org', badge: 'bg-purple-500/10 text-purple-400' },
-    { label: 'Maintenance Contractor', desc: 'V. Prasad', email: 'contractor@roadguard.org', badge: 'bg-orange-500/10 text-orange-400' },
-    { label: 'System Admin', desc: 'Central Admin', email: 'admin@roadguard.org', badge: 'bg-red-500/10 text-red-400' },
+
+  const handleRegisterRedirect = (preset: DemoPreset) => {
+    setSelectedPreset(null);
+    // Navigate to register with role hint in query params
+    navigate(`/register?role=${encodeURIComponent(preset.role)}&hint=${encodeURIComponent(preset.label)}`);
+  };
+
+  const demoPresets: DemoPreset[] = [
+    { label: 'Citizen', desc: 'Ravi Kumar', email: 'citizen@roadguard.org', badge: 'bg-emerald-500/10 text-emerald-400', role: 'citizen' },
+    { label: 'Field Inspector', desc: 'P. Suresh', email: 'inspector@roadguard.org', badge: 'bg-sky-500/10 text-sky-400', role: 'field_inspector' },
+    { label: 'Municipal Officer', desc: 'K. Lakshmi', email: 'municipal@roadguard.org', badge: 'bg-amber-500/10 text-amber-400', role: 'municipal_authority' },
+    { label: 'State Highway PWD', desc: 'M. Ramesh', email: 'pwd@roadguard.org', badge: 'bg-indigo-500/10 text-indigo-400', role: 'state_highway_authority' },
+    { label: 'NHAI Director', desc: 'Dr. Ananya', email: 'nhai@roadguard.org', badge: 'bg-purple-500/10 text-purple-400', role: 'nhai_authority' },
+    { label: 'Maintenance Contractor', desc: 'V. Prasad', email: 'contractor@roadguard.org', badge: 'bg-orange-500/10 text-orange-400', role: 'maintenance_contractor' },
+    { label: 'System Admin', desc: 'Central Admin', email: 'admin@roadguard.org', badge: 'bg-red-500/10 text-red-400', role: 'admin' },
   ];
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-950">
       <div className="max-w-md w-full space-y-8 bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl">
-        
+
         <div className="text-center">
           <div className="inline-flex p-3 rounded-2xl bg-sky-500/10 border border-sky-500/30 text-sky-400 mb-3">
             <Shield className="w-8 h-8" />
@@ -114,7 +122,7 @@ export const LoginPage: React.FC = () => {
           </button>
         </form>
 
-        {/* 1-Click Examiner Demo Login Buttons */}
+        {/* 1-Click Authority Demo Cards */}
         <div className="pt-4 border-t border-slate-800">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-mono uppercase text-sky-400 tracking-wider flex items-center gap-1.5">
@@ -128,13 +136,13 @@ export const LoginPage: React.FC = () => {
               <button
                 key={p.email}
                 type="button"
-                onClick={() => handleQuickDemo(p.email)}
+                onClick={() => setSelectedPreset(p)}
                 disabled={loading}
-                className="text-left p-2 bg-slate-950 border border-slate-800 hover:border-sky-500/50 rounded-lg transition group"
+                className="text-left p-2 bg-slate-950 border border-slate-800 hover:border-sky-500/50 rounded-lg transition group relative"
               >
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-semibold text-slate-200 group-hover:text-sky-300">{p.label}</span>
-                  <span className={`text-[9px] px-1.5 py-0.2 rounded font-mono ${p.badge}`}>{p.desc.split(' ')[0]}</span>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${p.badge}`}>{p.desc.split(' ')[0]}</span>
                 </div>
                 <p className="text-[10px] text-slate-500 truncate">{p.email}</p>
               </button>
@@ -150,6 +158,63 @@ export const LoginPage: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Authority Action Popup Modal */}
+      {selectedPreset && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setSelectedPreset(null)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-80 mx-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setSelectedPreset(null)}
+              className="absolute top-3 right-3 text-slate-500 hover:text-slate-300 transition"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Header */}
+            <div className="mb-5">
+              <span className={`inline-block text-[10px] px-2 py-0.5 rounded font-mono mb-2 ${selectedPreset.badge}`}>
+                {selectedPreset.label}
+              </span>
+              <h3 className="text-base font-bold text-white">{selectedPreset.desc}</h3>
+              <p className="text-xs text-slate-400 font-mono mt-0.5">{selectedPreset.email}</p>
+            </div>
+
+            <p className="text-xs text-slate-400 mb-4">
+              Choose an action for the <span className="text-white font-semibold">{selectedPreset.label}</span> authority account:
+            </p>
+
+            {/* Login Button */}
+            <button
+              onClick={() => handleQuickLogin(selectedPreset.email)}
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold transition mb-3 disabled:opacity-50"
+            >
+              <LogIn className="w-4 h-4" />
+              {loading ? 'Signing in...' : 'Login as ' + selectedPreset.label}
+            </button>
+
+            {/* Register Button */}
+            <button
+              onClick={() => handleRegisterRedirect(selectedPreset)}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-slate-700 hover:border-sky-500/60 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white text-sm font-semibold transition"
+            >
+              <UserPlus className="w-4 h-4" />
+              Register as {selectedPreset.label}
+            </button>
+
+            <p className="text-[10px] text-slate-500 text-center mt-3">
+              Demo password: <span className="font-mono text-slate-400">roadguard2026</span>
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

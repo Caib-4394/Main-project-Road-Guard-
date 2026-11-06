@@ -63,12 +63,13 @@ export const Navbar: React.FC = () => {
             </Link>
 
             {/* Role-Specific Portal Links */}
-            {user && ['nhai_authority', 'state_highway_authority', 'municipal_authority', 'field_inspector', 'admin', 'maintenance_contractor'].includes(user.role) && (
+            {user && user.role === 'field_inspector' && (
               <Link to="/inspection" className="flex items-center space-x-1.5 px-3 py-2 rounded-lg text-emerald-300 hover:text-white hover:bg-slate-800 transition">
                 <Camera className="w-4 h-4 text-emerald-400" />
                 <span>Field Inspection</span>
               </Link>
             )}
+
 
             {user && user.role === 'citizen' && (
               <Link to="/citizen" className="flex items-center space-x-1.5 px-3 py-2 rounded-lg text-sky-300 hover:text-white hover:bg-slate-800 transition">

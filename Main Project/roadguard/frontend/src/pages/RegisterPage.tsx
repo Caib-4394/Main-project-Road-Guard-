@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { api } from '../services/api';
-import { Shield, UserPlus, AlertCircle } from 'lucide-react';
+import { Shield, UserPlus, AlertCircle, Info } from 'lucide-react';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Role hint passed from the login page authority modal
+  const roleHint = searchParams.get('role') || 'citizen';
+  const labelHint = searchParams.get('hint') || 'Citizen';
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -13,6 +18,18 @@ export const RegisterPage: React.FC = () => {
   const [department, setDepartment] = useState('Civilian Resident - Ward 5');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Map role to badge color
+  const roleBadgeMap: Record<string, string> = {
+    citizen: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+    field_inspector: 'bg-sky-500/10 text-sky-400 border-sky-500/30',
+    municipal_authority: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+    state_highway_authority: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
+    nhai_authority: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+    maintenance_contractor: 'bg-orange-500/10 text-orange-400 border-orange-500/30',
+    admin: 'bg-red-500/10 text-red-400 border-red-500/30',
+  };
+  const badgeClass = roleBadgeMap[roleHint] || roleBadgeMap['citizen'];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +43,7 @@ export const RegisterPage: React.FC = () => {
         full_name: fullName,
         phone,
         department,
-        role: 'citizen'
+        role: roleHint
       });
       navigate('/login');
     } catch (err: any) {
@@ -44,11 +61,20 @@ export const RegisterPage: React.FC = () => {
           <div className="inline-flex p-3 rounded-2xl bg-sky-500/10 border border-sky-500/30 text-sky-400 mb-3">
             <UserPlus className="w-8 h-8" />
           </div>
-          <h2 className="text-2xl font-extrabold text-white">Create Citizen Account</h2>
+          <h2 className="text-2xl font-extrabold text-white">Create Account</h2>
           <p className="mt-1 text-xs text-slate-400">
-            Join RoadGuard to report potholes, track maintenance, and monitor municipal road health
+            Join RoadGuard to report, inspect, and manage municipal road infrastructure
           </p>
         </div>
+
+        {/* Role banner from authority card selection */}
+        {roleHint && roleHint !== 'citizen' && (
+          <div className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-medium ${badgeClass}`}>
+            <Info className="w-3.5 h-3.5 shrink-0" />
+            Registering as: <span className="font-bold">{labelHint}</span>
+            <span className="ml-auto text-[10px] opacity-70 font-mono">{roleHint}</span>
+          </div>
+        )}
 
         {error && (
           <div className="flex items-center space-x-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs">
